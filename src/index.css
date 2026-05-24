@@ -1,0 +1,212 @@
+@import "tailwindcss";
+
+html{
+  scroll-behavior:smooth;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#020617;
+  overflow-x:hidden;
+  color:white;
+}
+
+/* Smooth Selection */
+
+::selection{
+  background:#22d3ee;
+  color:black;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar{
+  width:10px;
+}
+
+::-webkit-scrollbar-track{
+  background:#020617;
+}
+
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(to bottom,#22d3ee,#7c3aed);
+  border-radius:999px;
+}
+
+/* Shooting Stars */
+
+.shooting-star,
+.shooting-star2{
+  position:absolute;
+  width:350px;
+  height:2px;
+  background:linear-gradient(to right,white,transparent);
+  opacity:0.8;
+  filter:blur(1px);
+}
+
+.shooting-star{
+  top:10%;
+  left:-20%;
+  animation:shoot 7s linear infinite;
+}
+
+.shooting-star2{
+  top:35%;
+  left:-30%;
+  animation:shoot2 10s linear infinite;
+}
+
+@keyframes shoot{
+
+  0%{
+    transform:translateX(0) translateY(0) rotate(25deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:1;
+  }
+
+  100%{
+    transform:translateX(2200px) translateY(700px) rotate(25deg);
+    opacity:0;
+  }
+
+}
+
+@keyframes shoot2{
+
+  0%{
+    transform:translateX(0) translateY(0) rotate(15deg);
+    opacity:0;
+  }
+
+  10%{
+    opacity:1;
+  }
+
+  100%{
+    transform:translateX(2400px) translateY(500px) rotate(15deg);
+    opacity:0;
+  }
+
+}
+
+/* Glow Cards */
+
+.glow-impact{
+  position:relative;
+  overflow:hidden;
+  transition:0.4s;
+}
+
+.glow-impact::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: radial-gradient(
+    circle,
+    rgba(34,211,238,0.15),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: 0.5s;
+  
+  /* THE FIX: This stops the glow overlay from blocking your mouse clicks! */
+  pointer-events: none; 
+}
+
+.glow-impact:hover::before{
+  opacity:1;
+}
+
+/* Floating Animation */
+
+@keyframes floaty{
+
+  0%{
+    transform:translateY(0px);
+  }
+
+  50%{
+    transform:translateY(-10px);
+  }
+
+  100%{
+    transform:translateY(0px);
+  }
+
+}
+
+.floaty{
+  animation:floaty 5s ease-in-out infinite;
+}
+
+/* Star Twinkle */
+
+@keyframes twinkle{
+
+  0%{
+    opacity:0.3;
+  }
+
+  50%{
+    opacity:1;
+  }
+
+  100%{
+    opacity:0.3;
+  }
+
+}
+
+.twinkle{
+  animation:twinkle 2s infinite ease-in-out;
+}
+
+/* Moon Glow */
+
+.moon-glow{
+  box-shadow:
+    0 0 80px rgba(255,255,255,0.25),
+    0 0 160px rgba(255,255,255,0.15),
+    0 0 220px rgba(34,211,238,0.1);
+}
+
+/* Glass Effect */
+
+.glass{
+  background:rgba(255,255,255,0.05);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+/* Smooth Hover */
+
+.smooth-hover{
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.smooth-hover:hover{
+  transform:translateY(-8px) scale(1.02);
+  border-color:rgba(34,211,238,0.45);
+
+  box-shadow:
+    0 0 40px rgba(34,211,238,0.18);
+}
+
+/* Text Glow */
+
+.text-glow{
+  text-shadow:
+    0 0 20px rgba(34,211,238,0.45);
+}
