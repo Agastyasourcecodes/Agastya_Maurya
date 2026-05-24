@@ -1,7 +1,11 @@
-# 🚀 Agastya's Portfolio
+# 🚀 My Portfolio
 
 A futuristic and cinematic full-stack developer portfolio built using React, Tailwind CSS, and Framer Motion.  
 This portfolio showcases my projects, experience, skills, animations, and interactive UI while delivering an immersive space-themed experience.
+
+
+<img width="959" height="479" alt="image" src="https://github.com/user-attachments/assets/ecdd6aab-9cab-432f-95f1-79177458c9df" />
+
 
 ---
 
