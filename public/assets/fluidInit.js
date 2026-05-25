@@ -1136,12 +1136,21 @@ window.addEventListener('mouseover', function (e) {
 
 window.addEventListener('mousemove', function (e) {
   let pointer = pointers[0];
-  if (!pointer.down) return;
+  
+  // FIX: Force the pointer to be active on hover
+  if (!pointer.down) {
+      pointer.down = true;
+      pointer.color = generateColor();
+      pointer.texcoordX = scaleByPixelRatio(e.clientX) / canvas.width;
+      pointer.texcoordY = 1.0 - scaleByPixelRatio(e.clientY) / canvas.height;
+      pointer.prevTexcoordX = pointer.texcoordX;
+      pointer.prevTexcoordY = pointer.texcoordY;
+  }
+  
   let posX = scaleByPixelRatio(e.clientX);
   let posY = scaleByPixelRatio(e.clientY);
   updatePointerMoveData(pointer, posX, posY);
 });
-
 window.addEventListener('touchstart', function (e) {
   // e.preventDefault();
   let touches = e.targetTouches;

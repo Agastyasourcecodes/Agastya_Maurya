@@ -2,18 +2,18 @@ import React, { useEffect } from 'react';
 
 export default function Fluid() {
   useEffect(() => {
+    // 1. Strict Mode Fix: Prevent React from injecting this twice
+    if (document.getElementById('fluid-script')) return;
+
     const script = document.createElement('script');
+    script.id = 'fluid-script'; 
     
-    // The leading slash tells Vite to look in the public folder
-    script.src = '/assets/js/fluidInit.js'; 
+    // 2. 404 Fix: Corrected the path to match where you actually saved the file!
+    script.src = '/assets/fluidInit.js'; 
+    
     script.async = true;
-    // Removed type='module' because fluidInit is standard vanilla JS, not an ES module
     
     document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
   }, []);
 
   return (
@@ -26,7 +26,7 @@ export default function Fluid() {
         width: '100vw',
         height: '100vh',
         zIndex: 0,
-        pointerEvents: 'none', // Prevents the canvas from blocking your form/buttons!
+        pointerEvents: 'none', 
       }}
     />
   );

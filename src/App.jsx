@@ -2,6 +2,7 @@ import {
   motion,
   useScroll,
   useTransform,
+  useSpring,
 } from "framer-motion";
 
 import {
@@ -28,11 +29,26 @@ export default function App() {
   const { scrollYProgress } = useScroll();
 
   /* MOON EXPLOSION LOGIC */
+/* MOON EXPLOSION LOGIC */
   const moonScale = useTransform(scrollYProgress, [0, 0.12], [1, 1.4]);
   const moonOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const meteorX = useTransform(scrollYProgress, [0, 0.12], ["120vw", "45vw"]);
-  const meteorY = useTransform(scrollYProgress, [0, 0.12], ["-10vh", "35vh"]);
-  const meteorScale = useTransform(scrollYProgress, [0, 0.12], [0.8, 2.2]);
+
+  // 1. Map scroll to raw numbers first (instead of strings)
+  const rawMeteorX = useTransform(scrollYProgress, [0, 0.12], [120, 45]);
+  const rawMeteorY = useTransform(scrollYProgress, [0, 0.12], [-10, 35]);
+  const rawMeteorScale = useTransform(scrollYProgress, [0, 0.12], [0.8, 2.2]);
+
+  // 2. Apply smooth physics to those numbers
+  const springConfig = { damping: 25, stiffness: 120, mass: 1.2 };
+  const smoothX = useSpring(rawMeteorX, springConfig);
+  const smoothY = useSpring(rawMeteorY, springConfig);
+  const smoothScale = useSpring(rawMeteorScale, springConfig);
+
+  // 3. Convert the smoothed numbers back into vw/vh strings for CSS
+  const meteorX = useTransform(smoothX, (x) => `${x}vw`);
+  const meteorY = useTransform(smoothY, (y) => `${y}vh`);
+  const meteorScale = smoothScale;
+
   const explosionOpacity = useTransform(scrollYProgress, [0.12, 0.16], [0, 1]);
   const piecesSpread = useTransform(scrollYProgress, [0.12, 0.25], [0, 300]);
 
@@ -232,10 +248,19 @@ export default function App() {
 
         {/* NAVBAR */}
         <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/10 bg-black/20">
-          <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-            <h1 className="text-3xl font-black bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent">
-              Agastya.dev
-            </h1>
+  <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+    
+    {/* UPDATED LOGO: Now clickable and links to Sketchpad! */}
+    <h1 className="text-3xl font-black transition hover:scale-105">
+      <a 
+        href="https://agastyasourcecodes.github.io/Sketchpad/" 
+        target="_blank" 
+        rel="noreferrer"
+        className="bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent cursor-pointer"
+      >
+        Agastya.dev
+      </a>
+    </h1>
             <div className="flex gap-8 text-lg items-center">
               <a href="#about" className="hover:text-cyan-400 transition">About</a>
               <a href="#experience" className="hover:text-cyan-400 transition">Experience</a>
@@ -263,12 +288,57 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
             >
-              <h1 className="text-6xl md:text-8xl font-black leading-[1.1] tracking-tight">
-                <span className="block text-gray-200">Hi, I'm</span>
-                <span className="bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,211,238,0.45)]">
-                  Agastya
-                </span>
-              </h1>
+             <h1 className="text-6xl md:text-8xl font-black leading-[1.1] tracking-tight">
+
+  {/* "Hi, I'm" - First Line Typing */}
+  <motion.span
+    initial="hidden"
+    animate="visible"
+    variants={{
+      hidden: { opacity: 1 },
+      visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1 }, // Speed of first line
+      },
+    }}
+    className="block text-gray-200"
+  >
+    {"Hi, I'm".split("").map((char, i) => (
+      <motion.span 
+        key={i} 
+        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+      >
+        {/* Preserves the space character so it doesn't collapse */}
+        {char === " " ? "\u00A0" : char}
+      </motion.span>
+    ))}
+  </motion.span>
+
+  {/* "Agastya" - Second Line Typing */}
+ <motion.span
+    initial="hidden"
+    animate="visible"
+    variants={{
+      hidden: { opacity: 1 },
+      visible: {
+        opacity: 1,
+        transition: { staggerChildren: 0.15, delayChildren: 0.8 }, 
+      },
+    }}
+    // FIX: Added 'pb-4' right after inline-block to fix the cut letters!
+    className="inline-block pb-4 bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,211,238,0.45)]"
+  >
+    {"Agastya".split("").map((char, i) => (
+      <motion.span 
+        key={i} 
+        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+      >
+        {char}
+      </motion.span>
+    ))}
+  </motion.span>
+
+</h1>
               <p className="mt-10 text-xl md:text-2xl text-gray-300 leading-[2.2rem] font-light max-w-2xl tracking-wide">
                 Backend & Full Stack Developer crafting scalable MERN applications, immersive user experiences, secure APIs, and futuristic web systems.
               </p>
@@ -416,12 +486,24 @@ export default function App() {
         </section>
 
         {/* SKILLS */}
+       {/* SKILLS */}
         <section id="skills" className="px-6 py-32">
           <h2 className="text-5xl font-black text-center mb-20">Skills</h2>
           <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
             {skills.map((skill, i) => (
               <motion.div
                 key={i}
+                initial={{ opacity: 0, y: 50 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                // 1. CHANGED: once: false makes it repeat every time you scroll!
+                viewport={{ once: false, margin: "-50px" }} 
+                transition={{ 
+                  // 2. CHANGED: Increased duration to 0.8s (from 0.6s)
+                  duration: 0.8, 
+                  // 3. CHANGED: Increased delay to 0.2s between each card (from 0.15s)
+                  delay: i * 0.2, 
+                  ease: "easeOut" 
+                }} 
                 whileHover={{
                   scale: 1.03,
                   boxShadow: "0 0 40px rgba(34,211,238,0.25)"
@@ -435,14 +517,25 @@ export default function App() {
             ))}
           </div>
         </section>
-
         {/* PROJECTS */}
+       {/* PROJECTS */}
         <section id="projects" className="px-6 py-32">
           <h2 className="text-5xl font-black text-center mb-20">Projects</h2>
           <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
             {projects.map((project, i) => (
               <motion.div
                 key={i}
+                // --- ADDED SCROLL ANIMATION ---
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, margin: "-50px" }}
+               transition={{
+  type: "spring",
+  stiffness: 70,
+  damping: 18,
+  delay: i * 0.12
+}}
+                // ------------------------------
                 whileHover={{
                   scale: 1.03,
                   boxShadow: "0 0 40px rgba(34,211,238,0.25)"
