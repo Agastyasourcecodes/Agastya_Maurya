@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   motion,
   useScroll,
@@ -26,10 +27,11 @@ import photo from "./assets/rocket.png";
 import Fluid from "./Fluid";
 
 export default function App() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const { scrollYProgress } = useScroll();
 
   /* MOON EXPLOSION LOGIC */
-/* MOON EXPLOSION LOGIC */
   const moonScale = useTransform(scrollYProgress, [0, 0.12], [1, 1.4]);
   const moonOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
@@ -171,7 +173,7 @@ export default function App() {
             y: meteorY,
             scale: meteorScale,
           }}
-        className="fixed z-0 pointer-events-none"
+          className="fixed z-0 pointer-events-none"
         >
           <div className="relative">
             {/* Trail */}
@@ -192,7 +194,7 @@ export default function App() {
           style={{
             opacity: explosionOpacity,
           }}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none overflow-hidden"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none overflow-hidden"
         >
           {[...Array(14)].map((_, i) => (
             <motion.div
@@ -248,20 +250,21 @@ export default function App() {
 
         {/* NAVBAR */}
         <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/10 bg-black/20">
-  <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
-    
-    {/* UPDATED LOGO: Now clickable and links to Sketchpad! */}
-    <h1 className="text-3xl font-black transition hover:scale-105">
-      <a 
-        href="https://agastyasourcecodes.github.io/Sketchpad/" 
-        target="_blank" 
-        rel="noreferrer"
-        className="bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent cursor-pointer"
-      >
-        Agastya.dev
-      </a>
-    </h1>
-            <div className="flex gap-8 text-lg items-center">
+          <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+            
+            {/* UPDATED LOGO: Now clickable and links to Sketchpad! */}
+            <h1 className="text-3xl font-black transition hover:scale-105">
+              <a 
+                href="https://agastyasourcecodes.github.io/Sketchpad/" 
+                target="_blank" 
+                rel="noreferrer"
+                className="bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent cursor-pointer"
+              >
+                Agastya.dev
+              </a>
+            </h1>
+            {/* DESKTOP NAV */}
+            <div className="hidden md:flex gap-8 text-lg items-center">
               <a href="#about" className="hover:text-cyan-400 transition">About</a>
               <a href="#experience" className="hover:text-cyan-400 transition">Experience</a>
               <a href="#skills" className="hover:text-cyan-400 transition">Skills</a>
@@ -276,74 +279,102 @@ export default function App() {
                 <span>Resume</span>
               </a>
             </div>
+
+            {/* MOBILE NAV (HAMBURGER) */}
+            <div
+              className="md:hidden text-3xl cursor-pointer"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? '✕' : '☰'}
+            </div>
+
           </div>
         </nav>
 
+        {/* MOBILE MENU OVERLAY */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden fixed inset-0 z-40 bg-black/90 backdrop-blur-lg flex flex-col items-center justify-center gap-8 text-2xl">
+            <a href="#about" className="hover:text-cyan-400 transition" onClick={() => setIsMobileMenuOpen(false)}>About</a>
+            <a href="#experience" className="hover:text-cyan-400 transition" onClick={() => setIsMobileMenuOpen(false)}>Experience</a>
+            <a href="#skills" className="hover:text-cyan-400 transition" onClick={() => setIsMobileMenuOpen(false)}>Skills</a>
+            <a href="#projects" className="hover:text-cyan-400 transition" onClick={() => setIsMobileMenuOpen(false)}>Projects</a>
+            <a href="#contact" className="hover:text-cyan-400 transition" onClick={() => setIsMobileMenuOpen(false)}>Contact</a>
+            <a
+              href="/resume.pdf"
+              download
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/20 border border-cyan-400 hover:bg-cyan-500/30 transition"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <FaDownload className="text-sm" />
+              <span>Resume</span>
+            </a>
+          </div>
+        )}
+
         {/* HERO */}
-        <section className="relative min-h-screen flex items-center justify-center px-6 pt-24">
-          <div className="grid md:grid-cols-2 gap-16 items-center max-w-7xl w-full">
+        <section className="relative min-h-screen flex items-center justify-center px-6 pt-24 max-md:pt-32">
+          <div className="grid md:grid-cols-2 gap-16 items-center max-w-7xl w-full max-md:gap-8">
             {/* LEFT */}
             <motion.div
               initial={{ opacity: 0, x: -80 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
             >
-             <h1 className="text-6xl md:text-8xl font-black leading-[1.1] tracking-tight">
+             <h1 className="text-6xl md:text-8xl font-black leading-[1.1] tracking-tight max-md:text-5xl">
 
-  {/* "Hi, I'm" - First Line Typing */}
-  <motion.span
-    initial="hidden"
-    animate="visible"
-    variants={{
-      hidden: { opacity: 1 },
-      visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.1 }, // Speed of first line
-      },
-    }}
-    className="block text-gray-200"
-  >
-    {"Hi, I'm".split("").map((char, i) => (
-      <motion.span 
-        key={i} 
-        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-      >
-        {/* Preserves the space character so it doesn't collapse */}
-        {char === " " ? "\u00A0" : char}
-      </motion.span>
-    ))}
-  </motion.span>
+              {/* "Hi, I'm" - First Line Typing */}
+              <motion.span
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 1 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.1 },
+                  },
+                }}
+                className="block text-gray-200"
+              >
+                {"Hi, I'm".split("").map((char, i) => (
+                  <motion.span 
+                    key={i} 
+                    variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+                  >
+                    {/* Preserves the space character so it doesn't collapse */}
+                    {char === " " ? "\u00A0" : char}
+                  </motion.span>
+                ))}
+              </motion.span>
 
-  {/* "Agastya" - Second Line Typing */}
- <motion.span
-    initial="hidden"
-    animate="visible"
-    variants={{
-      hidden: { opacity: 1 },
-      visible: {
-        opacity: 1,
-        transition: { staggerChildren: 0.15, delayChildren: 0.8 }, 
-      },
-    }}
-    // FIX: Added 'pb-4' right after inline-block to fix the cut letters!
-    className="inline-block pb-4 bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,211,238,0.45)]"
-  >
-    {"Agastya".split("").map((char, i) => (
-      <motion.span 
-        key={i} 
-        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-      >
-        {char}
-      </motion.span>
-    ))}
-  </motion.span>
+              {/* "Agastya" - Second Line Typing */}
+              <motion.span
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 1 },
+                  visible: {
+                    opacity: 1,
+                    transition: { staggerChildren: 0.15, delayChildren: 0.8 }, 
+                  },
+                }}
+                className="inline-block pb-4 bg-gradient-to-r from-cyan-300 via-blue-300 to-purple-400 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(34,211,238,0.45)]"
+              >
+                {"Agastya".split("").map((char, i) => (
+                  <motion.span 
+                    key={i} 
+                    variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+                  >
+                    {char}
+                  </motion.span>
+                ))}
+              </motion.span>
 
-</h1>
-              <p className="mt-10 text-xl md:text-2xl text-gray-300 leading-[2.2rem] font-light max-w-2xl tracking-wide">
+            </h1>
+              <p className="mt-10 text-xl md:text-2xl text-gray-300 leading-[2.2rem] font-light max-w-2xl tracking-wide max-md:text-lg max-md:leading-9">
                 Backend & Full Stack Developer crafting scalable MERN applications, immersive user experiences, secure APIs, and futuristic web systems.
               </p>
               {/* BUTTONS */}
-              <div className="flex gap-5 mt-10 flex-wrap">
+              <div className="flex gap-5 mt-10 flex-wrap max-md:justify-center">
                 <a
                   href="#projects"
                   className="px-8 py-4 rounded-2xl bg-cyan-500 hover:scale-105 transition font-semibold shadow-[0_0_30px_rgba(34,211,238,0.4)]"
@@ -358,7 +389,7 @@ export default function App() {
                 </a>
               </div>
               {/* SOCIALS */}
-              <div className="flex gap-3 mt-10 flex-wrap items-center">
+              <div className="flex gap-3 mt-10 flex-wrap items-center max-md:justify-center">
                 <a
                   href="https://github.com/Agastyasourcecodes"
                   target="_blank"
@@ -400,14 +431,14 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1 }}
-              className="flex justify-center"
+              className="flex justify-center max-md:order-first"
             >
               <div className="relative">
                 <div className="absolute inset-0 bg-cyan-500 blur-3xl opacity-20 rounded-full"></div>
                 <img
                   src="https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop"
                   alt="profile"
-                  className="w-[350px] h-[350px] rounded-full object-cover border-4 border-cyan-400 shadow-[0_0_50px_rgba(34,211,238,0.5)]"
+                  className="w-[350px] h-[350px] rounded-full object-cover border-4 border-cyan-400 shadow-[0_0_50px_rgba(34,211,238,0.5)] max-md:w-[280px] max-md:h-[280px]"
                 />
               </div>
             </motion.div>
@@ -415,7 +446,7 @@ export default function App() {
         </section>
 
         {/* ABOUT */}
-        <section id="about" className="px-6 py-32">
+        <section id="about" className="px-6 py-32 max-md:py-16">
           <motion.div
             initial={{ opacity: 0, y: 80 }}
             whileHover={{
@@ -443,7 +474,7 @@ export default function App() {
         </section>
 
         {/* EXPERIENCE */}
-        <section id="experience" className="px-6 py-32">
+        <section id="experience" className="px-6 py-32 max-md:py-16">
           <h2 className="text-5xl font-black text-center mb-20">Experience</h2>
           <div className="max-w-5xl mx-auto space-y-8">
             {experience.map((exp, i) => (
@@ -486,8 +517,7 @@ export default function App() {
         </section>
 
         {/* SKILLS */}
-       {/* SKILLS */}
-        <section id="skills" className="px-6 py-32">
+        <section id="skills" className="px-6 py-32 max-md:py-16">
           <h2 className="text-5xl font-black text-center mb-20">Skills</h2>
           <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
             {skills.map((skill, i) => (
@@ -495,12 +525,9 @@ export default function App() {
                 key={i}
                 initial={{ opacity: 0, y: 50 }} 
                 whileInView={{ opacity: 1, y: 0 }} 
-                // 1. CHANGED: once: false makes it repeat every time you scroll!
                 viewport={{ once: false, margin: "-50px" }} 
                 transition={{ 
-                  // 2. CHANGED: Increased duration to 0.8s (from 0.6s)
                   duration: 0.8, 
-                  // 3. CHANGED: Increased delay to 0.2s between each card (from 0.15s)
                   delay: i * 0.2, 
                   ease: "easeOut" 
                 }} 
@@ -517,25 +544,23 @@ export default function App() {
             ))}
           </div>
         </section>
+
         {/* PROJECTS */}
-       {/* PROJECTS */}
-        <section id="projects" className="px-6 py-32">
+        <section id="projects" className="px-6 py-32 max-md:py-16">
           <h2 className="text-5xl font-black text-center mb-20">Projects</h2>
           <div className="grid md:grid-cols-2 gap-10 max-w-6xl mx-auto">
             {projects.map((project, i) => (
               <motion.div
                 key={i}
-                // --- ADDED SCROLL ANIMATION ---
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: false, margin: "-50px" }}
-               transition={{
-  type: "spring",
-  stiffness: 70,
-  damping: 18,
-  delay: i * 0.12
-}}
-                // ------------------------------
+                transition={{
+                  type: "spring",
+                  stiffness: 70,
+                  damping: 18,
+                  delay: i * 0.12
+                }}
                 whileHover={{
                   scale: 1.03,
                   boxShadow: "0 0 40px rgba(34,211,238,0.25)"
@@ -596,7 +621,7 @@ export default function App() {
         </section>
 
         {/* CONTACT */}
-        <section id="contact" className="px-6 py-32">
+        <section id="contact" className="px-6 py-32 max-md:py-16">
           <motion.div
             initial={{ opacity: 0, y: 80 }}
             whileHover={{
