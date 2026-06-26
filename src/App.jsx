@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   motion,
   useScroll,
@@ -28,6 +28,17 @@ import Fluid from "./Fluid";
 
 export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // --- ADDED: Mobile detection to fix lag on phones ---
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile(); // Check on initial load
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  // ----------------------------------------------------
 
   const { scrollYProgress } = useScroll();
 
@@ -143,14 +154,25 @@ export default function App() {
     },
   ];
 
+  // Calculate stars only once on mount
+  const stars = useMemo(() => {
+    return [...Array(120)].map(() => ({
+      width: Math.random() * 3 + "px",
+      height: Math.random() * 3 + "px",
+      top: Math.random() * 100 + "%",
+      left: Math.random() * 100 + "%",
+      opacity: Math.random(),
+    }));
+  }, []);
+
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
 
       {/* BACKGROUND */}
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
         
-        {/* ADDED FLUID COMPONENT HERE */}
-        <Fluid />
+        {/* CONDITIONALLY RENDER FLUID SO IT DOESN'T LAG ON MOBILE */}
+        {!isMobile && <Fluid />}
 
         {/* CENTER MOON */}
         <motion.div
@@ -220,17 +242,11 @@ export default function App() {
         <div className="absolute inset-0 bg-black/65"></div>
 
         {/* STARS */}
-        {[...Array(120)].map((_, i) => (
+        {stars.map((starStyle, i) => (
           <div
             key={i}
             className="absolute bg-white rounded-full animate-pulse"
-            style={{
-              width: Math.random() * 3 + "px",
-              height: Math.random() * 3 + "px",
-              top: Math.random() * 100 + "%",
-              left: Math.random() * 100 + "%",
-              opacity: Math.random(),
-            }}
+            style={starStyle}
           />
         ))}
 
@@ -245,14 +261,13 @@ export default function App() {
 
       </div>
 
-      {/* RE-ADDED FOREGROUND WRAPPER SO LINKS AND FORMS ARE CLICKABLE */}
+      {/* FOREGROUND WRAPPER SO LINKS AND FORMS ARE CLICKABLE */}
       <div className="relative z-10">
 
         {/* NAVBAR */}
         <nav className="fixed top-0 w-full z-50 backdrop-blur-xl border-b border-white/10 bg-black/20">
           <div className="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
             
-            {/* UPDATED LOGO: Now clickable and links to Sketchpad! */}
             <h1 className="text-3xl font-black transition hover:scale-105">
               <a 
                 href="https://agastyasourcecodes.github.io/Sketchpad/" 
